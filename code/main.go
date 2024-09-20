@@ -1,17 +1,15 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"image/jpeg"
 	"io/fs"
 	"os"
+	"path/filepath"
 
 	"golang.org/x/image/webp"
-
-	"path/filepath"
 )
-
-const MODE = "DEV"
 
 const INPUT_FOLDER_NAME = "input"
 const OUTPUT_FOLDER_NAME = "output"
@@ -20,7 +18,11 @@ func getExePath() (string, error) {
 	/*	In dev mode I'm not sure where the executable will be generated,
 	*	so I hardcode it to be relative to the shell
 	 */
-	if MODE == "DEV" {
+	DEVMODE := flag.Bool("dev", false, "For dev purpose it hardcodes the executable path")
+
+	flag.Parse()
+
+	if *DEVMODE {
 		return "./", nil
 	}
 	exePath, err := os.Executable()
@@ -50,6 +52,7 @@ func retrieveFolder(path string) ([]fs.DirEntry, error) {
 func main() {
 	exePath, err := getExePath()
 	if err != nil {
+		fmt.Printf("%s", err.Error())
 		return
 	}
 
@@ -65,11 +68,7 @@ func main() {
 	retrieveFolder(outputFolderPath)
 
 	for _, file := range files {
-		if file.IsDir() {
-			continue
-		}
-
-		if filepath.Ext(file.Name()) != ".webp" {
+		if file.IsDir() || filepath.Ext(file.Name()) != ".webp" {
 			continue
 		}
 
@@ -78,32 +77,34 @@ func main() {
 		// Removing the extension from the name
 		outPath = outPath[0 : len(outPath)-len(filepath.Ext(outPath))]
 
+		// Retrieving the file
 		f, err := os.Open(filePath)
 		if err != nil {
 			continue
 		}
 		defer f.Close()
 
+		// Retrieving the content of webp file
 		img, err := webp.Decode(f)
 		if err != nil {
 			continue
 		}
 
-		outFile, err := os.Create(outPath + ".jpeg")
+		// Creating the new jpg file
+		outFile, err := os.Create(outPath + ".jpg")
 		if err != nil {
 			continue
 		}
 
 		defer outFile.Close()
 
+		// Setting the content of the newly created jpg file
 		err = jpeg.Encode(outFile, img, &jpeg.Options{Quality: 90})
 		if err != nil {
 			continue
 		}
-
-		// newFile := fmt.Sprintf("%s/%s", outputFolderPath, file.Name())
-		// fmt.Printf("\n%s", newFile)
-		// os.Create(newFile)
 	}
+
+	fmt.Println("Done")
 
 }
