@@ -2,8 +2,12 @@ package main
 
 import (
 	"fmt"
+	"image/jpeg"
 	"io/fs"
 	"os"
+
+	"golang.org/x/image/webp"
+
 	"path/filepath"
 )
 
@@ -28,7 +32,6 @@ func getExePath() (string, error) {
 }
 
 func retrieveFolder(path string) ([]fs.DirEntry, error) {
-	fmt.Printf(path)
 	content, err := os.ReadDir(path)
 
 	if err == nil {
@@ -38,7 +41,6 @@ func retrieveFolder(path string) ([]fs.DirEntry, error) {
 	//If folder does not exist try to create it
 	err = os.Mkdir(path, os.ModePerm)
 	if err != nil {
-		fmt.Printf("\nOn a tout tenté")
 		return nil, err
 	}
 
@@ -50,11 +52,58 @@ func main() {
 	if err != nil {
 		return
 	}
+
 	inputFolderPath := filepath.Join(exePath, INPUT_FOLDER_NAME)
-	_, err = retrieveFolder(inputFolderPath)
-	fmt.Printf("\n%s", inputFolderPath)
-	if err != nil {
-		fmt.Printf("\nNo file found")
+	outputFolderPath := filepath.Join(exePath, OUTPUT_FOLDER_NAME)
+
+	files, err := retrieveFolder(inputFolderPath)
+	if err != nil || len(files) == 0 {
+		fmt.Println("No file found")
+		return
+	}
+
+	retrieveFolder(outputFolderPath)
+
+	for _, file := range files {
+		if file.IsDir() {
+			continue
+		}
+
+		if filepath.Ext(file.Name()) != ".webp" {
+			continue
+		}
+
+		filePath := fmt.Sprintf("%s/%s", inputFolderPath, file.Name())
+		outPath := fmt.Sprintf("%s/%s", outputFolderPath, file.Name())
+		// Removing the extension from the name
+		outPath = outPath[0 : len(outPath)-len(filepath.Ext(outPath))]
+
+		f, err := os.Open(filePath)
+		if err != nil {
+			continue
+		}
+		defer f.Close()
+
+		img, err := webp.Decode(f)
+		if err != nil {
+			continue
+		}
+
+		outFile, err := os.Create(outPath + ".jpeg")
+		if err != nil {
+			continue
+		}
+
+		defer outFile.Close()
+
+		err = jpeg.Encode(outFile, img, &jpeg.Options{Quality: 90})
+		if err != nil {
+			continue
+		}
+
+		// newFile := fmt.Sprintf("%s/%s", outputFolderPath, file.Name())
+		// fmt.Printf("\n%s", newFile)
+		// os.Create(newFile)
 	}
 
 }
