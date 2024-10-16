@@ -2,5 +2,6 @@
 
 install:
 	go get .
-build:
+	
+build-win:
 	go build -o ./bin/converter.exe ./main.go
