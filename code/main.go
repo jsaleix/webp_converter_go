@@ -67,6 +67,8 @@ func main() {
 
 	retrieveFolder(outputFolderPath)
 
+	processed := 0
+
 	for _, file := range files {
 		if file.IsDir() || filepath.Ext(file.Name()) != ".webp" {
 			continue
@@ -102,9 +104,15 @@ func main() {
 		err = jpeg.Encode(outFile, img, &jpeg.Options{Quality: 90})
 		if err != nil {
 			continue
+		} else {
+			processed++
 		}
 	}
 
-	fmt.Println("Done")
+	fmt.Printf("Done\n")
+	fmt.Printf("Processed files: %d\n", processed)
+	if processed > 0 {
+		fmt.Printf("Output dir. %s\n", outputFolderPath)
+	}
 
 }
