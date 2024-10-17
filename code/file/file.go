@@ -1,21 +1,22 @@
 package file
 
 import (
-	"flag"
 	"io/fs"
 	"os"
 	"path/filepath"
+	"webp_converter/config"
 )
 
 func GetExePath() (string, error) {
-	/*	In dev mode I'm not sure where the executable will be generated,
+	/*
+	*	In dev mode I'm not sure where the executable will be generated,
 	*	so I hardcode it to be relative to the shell
+	*	if --dev is applied
 	 */
-	DEVMODE := flag.Bool("dev", false, "For dev purpose it hardcodes the executable path")
 
-	flag.Parse()
+	OPTIONS := config.GetOptions()
 
-	if *DEVMODE {
+	if OPTIONS.DevMode {
 		return "./", nil
 	}
 	exePath, err := os.Executable()
@@ -26,7 +27,7 @@ func GetExePath() (string, error) {
 	return path, nil
 }
 
-func GetFolder(path string) ([]fs.DirEntry, error) {
+func getFolder(path string) ([]fs.DirEntry, error) {
 	content, err := os.ReadDir(path)
 
 	if err == nil {
@@ -35,7 +36,7 @@ func GetFolder(path string) ([]fs.DirEntry, error) {
 	return nil, err
 }
 
-func CreateFolder(path string) error {
+func createFolder(path string) error {
 	err := os.Mkdir(path, os.ModePerm)
 	if err != nil {
 		return err
@@ -45,13 +46,13 @@ func CreateFolder(path string) error {
 }
 
 func FindOrCreateFolder(path string) ([]fs.DirEntry, error) {
-	content, err := GetFolder(path)
+	content, err := getFolder(path)
 
 	if err == nil {
 		return content, nil
 	}
 
-	err = CreateFolder(path)
+	err = createFolder(path)
 	if err != nil {
 		return nil, err
 	}

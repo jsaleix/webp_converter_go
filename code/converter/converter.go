@@ -17,14 +17,6 @@ const INPUT_FOLDER_NAME = "input"
 const OUTPUT_FOLDER_NAME = "output"
 
 func Run() {
-	// exePath, err := file.GetExePath()
-	// if err != nil {
-	// 	fmt.Printf("%s", err.Error())
-	// 	return
-	// }
-
-	// inputFolderPath := filepath.Join(exePath, INPUT_FOLDER_NAME)
-	// outputFolderPath := filepath.Join(exePath, OUTPUT_FOLDER_NAME)
 	inputFolderPath, outputFolderPath, err := getPaths()
 	if err != nil {
 		fmt.Printf("%s", err.Error())

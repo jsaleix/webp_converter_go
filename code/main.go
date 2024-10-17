@@ -1,16 +1,16 @@
 package main
 
 import (
-	"flag"
+	"webp_converter/config"
 	"webp_converter/converter"
 )
 
 func main() {
-	helpCmd := flag.Bool("help", false, "Show the folders")
+	config.Init()
 
-	flag.Parse()
+	options := config.GetOptions()
 
-	if *helpCmd {
+	if options.HelpValue {
 		converter.GetHelp()
 	} else {
 		converter.Run()
