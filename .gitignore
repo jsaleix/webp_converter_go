@@ -1,3 +1,7 @@
 input/
 output/
 /code/bin/*
+/result
+*.jpeg
+*.jpg
+*.webp

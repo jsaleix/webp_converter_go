@@ -1,27 +1,28 @@
 package config
 
-import "flag"
+import (
+	"log"
+	"os"
+	"path/filepath"
+	"runtime"
+)
 
-type CLIOptions struct {
-	HelpValue bool
-	DevMode   bool
-}
-
-var options = CLIOptions{
-	HelpValue: false,
-	DevMode:   false,
-}
+var CURRENT_DIRECTORY string
 
 func Init() {
-	helpOpt := flag.Bool("help", false, "Show the folders")
-	devOpt := flag.Bool("dev", false, "For dev purpose it hardcodes the executable path")
+	currentDir, err := os.Getwd()
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
 
-	flag.Parse()
+	currentDir, err = filepath.Abs(currentDir)
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
 
-	options.HelpValue = *helpOpt
-	options.DevMode = *devOpt
-}
+	CURRENT_DIRECTORY = currentDir
 
-func GetOptions() CLIOptions {
-	return options
+	if runtime.GOOS == "windows" {
+		CURRENT_DIRECTORY = filepath.ToSlash(CURRENT_DIRECTORY)
+	}
 }

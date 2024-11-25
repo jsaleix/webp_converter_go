@@ -7,12 +7,5 @@ import (
 
 func main() {
 	config.Init()
-
-	options := config.GetOptions()
-
-	if options.HelpValue {
-		converter.GetHelp()
-	} else {
-		converter.Run()
-	}
+	converter.Run()
 }

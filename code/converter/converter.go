@@ -5,33 +5,27 @@ import (
 	"fmt"
 	"image/jpeg"
 	"io/fs"
+	"log"
 	"os"
 	"path/filepath"
 
 	"golang.org/x/image/webp"
 
-	"webp_converter/file"
+	"webp_converter/config"
 )
 
-const INPUT_FOLDER_NAME = "input"
-const OUTPUT_FOLDER_NAME = "output"
-
 func Run() {
-	inputFolderPath, outputFolderPath, err := getPaths()
+	inputFolderPath := config.CURRENT_DIRECTORY
+
+	err := os.Mkdir("./result", 0750)
 	if err != nil {
-		fmt.Printf("%s", err.Error())
-		return
+		log.Panicf(err.Error())
 	}
+	outputFolderPath := filepath.Join(config.CURRENT_DIRECTORY, "./result")
 
-	files, err := file.FindOrCreateFolder(inputFolderPath)
+	files, err := os.ReadDir(inputFolderPath)
 	if err != nil || len(files) == 0 {
-		fmt.Println("No file found")
-		return
-	}
-
-	if _, err = file.FindOrCreateFolder(outputFolderPath); err != nil {
-		fmt.Println("Could not find or create output folder")
-		return
+		log.Panicf("No file found")
 	}
 
 	processed := 0
@@ -39,14 +33,14 @@ func Run() {
 	for _, file := range files {
 		err = processFile(inputFolderPath, outputFolderPath, file)
 		if err != nil {
-			fmt.Printf("%s\n", err.Error())
+			// fmt.Printf("%s\n", err.Error())
 			continue
 		} else {
 			processed++
 		}
 	}
 
-	fmt.Printf("Done\n")
+	fmt.Println("Done")
 	fmt.Printf("Processed files: %d\n", processed)
 	if processed > 0 {
 		fmt.Printf("Output dir. %s\n", outputFolderPath)
@@ -88,26 +82,4 @@ func processFile(inputFolderPath, outputFolderPath string, file fs.DirEntry) err
 	// Setting the content of the newly created jpg file
 	err = jpeg.Encode(outFile, img, &jpeg.Options{Quality: 90})
 	return err
-}
-
-func getPaths() (inputPath, outputPath string, err error) {
-	exePath, err := file.GetExePath()
-	if err != nil {
-		return "", "", err
-	}
-
-	inputFolderPath := filepath.Join(exePath, INPUT_FOLDER_NAME)
-	outputFolderPath := filepath.Join(exePath, OUTPUT_FOLDER_NAME)
-
-	return inputFolderPath, outputFolderPath, nil
-}
-
-func GetHelp() {
-	inputFolderPath, outputFolderPath, err := getPaths()
-	if err != nil {
-		fmt.Printf("%s", err.Error())
-		return
-	}
-	fmt.Printf("Put your webp files in: %s\n", inputFolderPath)
-	fmt.Printf("Jpg files will be generated in: %s\n", outputFolderPath)
 }
