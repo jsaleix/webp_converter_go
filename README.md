@@ -13,8 +13,7 @@ make build-win
 
 ## Usage
 
-The application will create two folders `/input` and `/output`.
-Place all your webp files in `/input` and run the app. It will generate the processed jpg files in `/output` .
+The application will list every webp files in the current folder and generate the processed jpg files in a newly created `/result` folder.
 
 You can run it directly by double-clicking if you're using an executable. 
 But you can also use it from the command terminal in this way:
@@ -27,24 +26,10 @@ go run .
 
 ## Misc when using the terminal
 
-Expected output with two webp files in `/input` :
+Expected output with two webp files in the current directory:
 
 ```bash
 Done
 Processed files: 2
-Output dir. C:\Users\Impera\Documents\webp_converter_cli\bin\output
+Output dir. C:\Users\Impera\Documents\webp_converter_cli\bin\result
 ```
-
-You can obtain the paths for `/input` and `/output` by using the **--help** option:
-
-```bash
-go run . --help
-# Or if compiled
-./converter.exe --help
-```
-
-```bash
-Put your webp files in: C:\Users\Impera\Documents\webp_converter_cli\bin\input
-Jpg files will be generated in: C:\Users\Impera\Documents\webp_converter_cli\bin\output
-```
-
