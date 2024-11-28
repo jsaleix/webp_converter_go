@@ -15,7 +15,7 @@ make build-win
 
 ## Usage
 
-The application will list every webp files in the current folder and generate the processed jpg files in a newly created `/result` folder.
+The application will list every webp files in the current folder and generate the processed jpg files next to the originals.
 
 You can run it directly by double-clicking or use it from the command terminal in this way:
 
@@ -29,10 +29,10 @@ go run .
 
 ## Misc when using the terminal
 
-Expected output with two webp files in the current directory:
+Expected output with two webp files in the current directory ```C:\Users\Bob\Documents\webp_converter\bin\imgs```:
 
 ```bash
 Done
 Processed files: 2
-Output dir. C:\Users\Impera\Documents\webp_converter\bin\result
+Output dir. C:\Users\Bob\Documents\webp_converter\bin\imgs
 ```

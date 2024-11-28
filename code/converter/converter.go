@@ -16,12 +16,13 @@ import (
 
 func Run() {
 	inputFolderPath := config.CURRENT_DIRECTORY
-
-	err := os.Mkdir("./result", 0750)
-	if err != nil {
-		log.Panicf(err.Error())
-	}
-	outputFolderPath := filepath.Join(config.CURRENT_DIRECTORY, "./result")
+	// outputFolderPath := filepath.Join(config.CURRENT_DIRECTORY, "./result")
+	// err := os.Mkdir("./result", 0750)
+	// if err != nil {
+	// 	log.Panicf(err.Error())
+	// }
+	// Change of mind, the jpg files will be added next to originals
+	outputFolderPath := inputFolderPath
 
 	files, err := os.ReadDir(inputFolderPath)
 	if err != nil || len(files) == 0 {
